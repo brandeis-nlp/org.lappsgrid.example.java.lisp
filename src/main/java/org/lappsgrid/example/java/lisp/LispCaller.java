@@ -6,21 +6,68 @@ import clojure.lang.Compiler;
 import org.apache.commons.io.FileUtils;
 import org.armedbear.lisp.*;
 import org.armedbear.lisp.Package;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import sun.net.www.protocol.file.FileURLConnection;
 
 import java.io.*;
+import java.net.URISyntaxException;
 import java.nio.charset.Charset;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 import static org.armedbear.lisp.Lisp.NIL;
 
 public class LispCaller {
 
+    static final Logger logger = LoggerFactory.getLogger(LispCaller.class);
+
     public enum LispType {
         ABCL,
-        Clojure
+        Clojure,
+        CMD
     }
+
+    private static Map callIO(String tool, File lispFile, String ... params) throws LispCallerException{
+        Map result = new LinkedHashMap();
+        List<String> callAndArgs = new ArrayList<String>(params.length + 2);
+        callAndArgs.add(tool);
+        callAndArgs.add(lispFile.getAbsolutePath());
+        logger.info("call(): lisp=" + lispFile);
+        for (String param: params) {
+            callAndArgs.add(param);
+        }
+        result.put("tool", tool);
+        result.put("lisp", lispFile.getAbsolutePath());
+        result.put("params", params);
+        try{
+            ProcessBuilder builder = new ProcessBuilder(callAndArgs);
+            Process p = builder.start();
+            BufferedReader stdInput =
+                    new BufferedReader(new InputStreamReader(p.getInputStream()));
+            BufferedReader stdError =
+                    new BufferedReader(new InputStreamReader(p.getErrorStream()));
+            String st = null;
+            StringBuilder sb = new StringBuilder();
+            while ((st = stdInput.readLine()) != null) {
+                sb.append(st);
+            }
+            result.put("output", sb.toString());
+            sb.setLength(0);
+            while ((st = stdError.readLine()) != null) {
+                sb.append(st);
+            }
+            result.put("error", sb.toString());
+            int retcode = p.waitFor();
+            result.put("retcode", retcode);
+            p.destroy();
+        }catch(Exception e){
+            e.printStackTrace();
+            throw new LispCallerException(e);
+        }
+        return result;
+    }
+
+
 
 
     public static Object eval(LispType type, File lispFile) throws LispCallerException{
@@ -31,12 +78,16 @@ public class LispCaller {
             return evalABCL(lispFile);
         }else if(type == LispType.Clojure){
             return evalClojure(lispFile);
+        }else if(type == LispType.CMD) {
+            return evalCMD(lispFile);
         }
-
         return null;
     }
 
-    public static Object call (LispType type, File lispFile,String ns, String method, Object... params) throws LispCallerException{
+
+
+
+    public static Object call (LispType type, File lispFile, String ns, String method, Object... params) throws LispCallerException{
         if(!lispFile.exists()) {
             throw new LispCallerException("Lisp file does NOT exist: " + lispFile);
         }
@@ -44,13 +95,27 @@ public class LispCaller {
             return callABCL(lispFile, ns, method, params);
         }else if(type == LispType.Clojure){
             return callClojure(lispFile, ns, method, params);
+        }else if(type == LispType.CMD){
+            throw new LispCallerException("Not Supported Method!");
         }
-
         return null;
     }
 
 
-    protected static Object evalABCL(File abclFile) throws LispCallerException{
+    public static Map evalCMD(File lispFile) throws LispCallerException{
+        String tool = "";
+        try {
+            tool = new File(LispCaller.class.getResource("/caller.cmd").toURI()).getAbsolutePath();
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+            throw new LispCallerException("Tool Script does NOT exist: (caller.cmd)");
+        }
+        Map resMap = callIO(tool, lispFile);
+        return resMap;
+    }
+
+
+    protected static LispObject evalABCL(File abclFile) throws LispCallerException{
         Interpreter interpreter = Interpreter.getInstance();
         if(interpreter == null) {
             interpreter = Interpreter.createInstance();
@@ -67,7 +132,7 @@ public class LispCaller {
     }
 
 
-    protected static Object callABCL(File abclFile, String pckg, String method, Object... params) throws LispCallerException{
+    protected static LispObject callABCL(File abclFile, String pckg, String method, Object... params) throws LispCallerException{
         Interpreter interpreter = Interpreter.getInstance();
         if(interpreter == null) {
             interpreter = Interpreter.createInstance();
