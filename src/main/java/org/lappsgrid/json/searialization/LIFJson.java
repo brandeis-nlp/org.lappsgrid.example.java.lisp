@@ -1,13 +1,21 @@
 package org.lappsgrid.json.searialization;
 
+import org.apache.commons.io.IOUtils;
 import org.lappsgrid.discriminator.Discriminators;
 import org.lappsgrid.json.JacksonJsonProxy;
 import org.lappsgrid.json.Json;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.PrintWriter;
+import java.io.StringWriter;
 
 /**
  * Created by shi on 7/9/15.
  */
 public class LIFJson {
+
+    static final Logger logger = LoggerFactory.getLogger(LIFJson.class);
 
     String discriminator = null;
     Json.Obj payload = null;
@@ -45,7 +53,7 @@ public class LIFJson {
 //    }
 //
 
-    Json.Proxy proxy = new JacksonJsonProxy();
+    protected static Json.Proxy proxy = new JacksonJsonProxy();
 
     public LIFJson() {
         json = proxy.newObject();
@@ -292,6 +300,40 @@ public class LIFJson {
         }
         return json.toString();
     }
+
+
+    public static String toString(Throwable th) {
+        Json.Obj json = proxy.newObject();
+        json.put("discriminator", Discriminators.Uri.ERROR);
+        Json.Obj error = proxy.newObject();
+        error.put("message", th.getMessage());
+        StringWriter sw = new StringWriter();
+        th.printStackTrace( new PrintWriter(sw));
+        error.put("stacktrace", sw.toString());
+        json.put("payload", error);
+        return json.toString();
+    }
+
+    public static String meta(Class cls) throws Exception {
+        String meta = IOUtils.toString(cls.getResourceAsStream(cls.getName()));
+        Json.Obj json = proxy.newObject();
+        json.put("discriminator", Discriminators.Uri.META);
+        json.put("payload", proxy.newObject().read(meta));
+        logger.info("---------------------META:-------------------\n" + json.toString());
+        return json.toString();
+    }
+
+    public static boolean isJsonObj(String s) {
+        if (s != null) {
+            s = s.trim();
+            if (s.startsWith("{") && s.endsWith("}")){
+                //TODO: more strict validate
+                return true;
+            }
+        }
+        return false;
+    }
+
 //
 //    @Override
 //    public boolean equals(Object o) {
