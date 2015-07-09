@@ -208,10 +208,6 @@ public class LispCaller {
         result.put(Result_Name_Params, params);
 
         org.armedbear.lisp.Package lisppkg = Packages.findPackage(pckg.toUpperCase());
-//        for (Symbol sym:lisppkg.getAccessibleSymbols()){
-//            System.out.println(sym.getName());
-//        }
-
         org.armedbear.lisp.Symbol symbl = lisppkg.findAccessibleSymbol(method.toUpperCase());
         Function func = (Function) symbl.getSymbolFunction();
         LispObject [] lispobjs = new LispObject[params.length];
@@ -269,25 +265,25 @@ public class LispCaller {
     }
 
 
-    public static void main(String[] args) throws Exception {
-        // Load the Clojure script -- as a side effect this initializes the runtime.
-        String str = "(ns user) (defn foo [a b]   (str a \" \" b))";
-
-//        REQUIRE.invoke(CLOJURE_MAIN);
-
-        Compiler.load(new StringReader(str));
-
-        // Get a reference to the foo function.
-        Var foo = RT.var("user", "foo");
-
-        // Call it!
-        Object result = foo.invoke("Hi", "there");
-
-
-//        REQUIRE.invoke(CLOJURE_MAIN);
-        MAIN.applyTo(RT.seq(args));
-
-        System.out.println(result);
-    }
+//    public static void main(String[] args) throws Exception {
+//        // Load the Clojure script -- as a side effect this initializes the runtime.
+//        String str = "(ns user) (defn foo [a b]   (str a \" \" b))";
+//
+////        REQUIRE.invoke(CLOJURE_MAIN);
+//
+//        Compiler.load(new StringReader(str));
+//
+//        // Get a reference to the foo function.
+//        Var foo = RT.var("user", "foo");
+//
+//        // Call it!
+//        Object result = foo.invoke("Hi", "there");
+//
+//
+////        REQUIRE.invoke(CLOJURE_MAIN);
+//        MAIN.applyTo(RT.seq(args));
+//
+//        System.out.println(result);
+//    }
 
 }

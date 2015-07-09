@@ -28,17 +28,30 @@ public class TestLispCaller{
 
     @Test
     public void testCallABCL () throws LispCallerException {
-        Object ret = LispCaller.callABCL(getResourceFile("helloworld.lisp"), null, "HELLO");
-        System.out.println(ret);
-//        ret = LispCaller.callABCL(getResourceFile("list.lisp"), null, "HELLOWORLD", "Your");
+//        Object ret = LispCaller.callABCL(getResourceFile("helloworld.lisp"), null, "HELLO");
 //        System.out.println(ret);
+        Object ret = LispCaller.callABCL(getResourceFile("hello.lisp"), null, "hello", "you");
+        System.out.println(ret);
 
     }
 
 
-    public void testEvalABCL () throws LispCallerException {
-        Object ret = LispCaller.evalABCL(getResourceFile("list.lisp"));
+    @Test
+    public void testCallBash () throws LispCallerException {
+        Object ret = LispCaller.callBash(null, "hello");
         System.out.println(ret);
+    }
+
+    @Test
+    public void testCallGroovy () throws LispCallerException {
+        Object ret = LispCaller.callGroovy(null, "hello");
+        System.out.println(ret);
+    }
+
+
+    public void testEvalABCL () throws LispCallerException {
+//        Object ret = LispCaller.evalABCL(getResourceFile("hello.lisp"));
+//        System.out.println(ret);
     }
 
 

@@ -45,15 +45,15 @@ public class LIFJson {
 //    }
 //
 
-    Json.Proxy JsonProxy = new JacksonJsonProxy();
+    Json.Proxy proxy = new JacksonJsonProxy();
 
     public LIFJson() {
-        json = JsonProxy.newObject();
+        json = proxy.newObject();
         discriminator = Discriminators.Uri.JSON_LD;
-        payload= JsonProxy.newObject();
-        metadata = JsonProxy.newObject();
-        error = JsonProxy.newObject();
-        targets = JsonProxy.newArray();
+        payload= proxy.newObject();
+        metadata = proxy.newObject();
+        error = proxy.newObject();
+        targets = proxy.newArray();
     }
     //
     public void setDiscriminator(String s) {
@@ -69,20 +69,20 @@ public class LIFJson {
     }
     //
     public LIFJson(String textjson) {
-        json = JsonProxy.newObject().read(textjson);
+        json = proxy.newObject().read(textjson);
         discriminator = json.get("discriminator").toString().trim();
         if(discriminator.equals(Discriminators.Uri.JSON_LD)) {
             payload = (Json.Obj)json.get("payload");
             metadata = (Json.Obj)payload.get("metadata");
             if (metadata == null) {
-                metadata = JsonProxy.newObject();
+                metadata = proxy.newObject();
             }
             Json.Arr sourceArr =  (Json.Arr)payload.get("sources");
             sources = new String[sourceArr.length()];
             for(int i = 0; i < sourceArr.length(); i++) {
                 sources[i] = sourceArr.get(i).toString();
             }
-            targets = JsonProxy.newArray();
+            targets = proxy.newArray();
         }
     }
 
@@ -97,7 +97,7 @@ public class LIFJson {
 //    public Json.Obj newViewsMetadata(Json.Obj view){
 //        Json.Obj metadata = view.getJson.Obj("metadata");
 //        if (metadata == null) {
-//            metadata = JsonProxy.newObject();
+//            metadata = proxy.newObject();
 //            view.put("metadata", metadata);
 //        }
 //        return metadata;
@@ -114,10 +114,10 @@ public class LIFJson {
 //        Json.Obj meta = this.newViewsMetadata(view);
 //        Json.Obj contains = meta.getJson.Obj("contains");
 //        if (contains == null) {
-//            contains = JsonProxy.newObject();
+//            contains = proxy.newObject();
 //            meta.put("contains", contains);
 //        }
-//        Json.Obj contain = JsonProxy.newObject();
+//        Json.Obj contain = proxy.newObject();
 //        contain.put("producer", producer);
 //        contain.put("type",type);
 //        contains.put(containName,contain);
@@ -125,10 +125,10 @@ public class LIFJson {
 //    }
 //
 //    public Json.Obj newAnnotation(Json.Obj view){
-//        Json.Obj annotation = JsonProxy.newObject();
+//        Json.Obj annotation = proxy.newObject();
 //        Json.Arr annotations = view.getJson.Arr("annotations");
 //        if (annotations == null) {
-//            annotations = JsonProxy.newArray();
+//            annotations = proxy.newArray();
 //            view.put("annotations", annotations);
 //        }
 //        annotations.add(annotation);
@@ -139,7 +139,7 @@ public class LIFJson {
 //        Json.Obj annotation = new Json.Obj(copyfrom.toString());
 //        Json.Arr annotations = view.getJson.Arr("annotations");
 //        if (annotations == null) {
-//            annotations = JsonProxy.newArray();
+//            annotations = proxy.newArray();
 //            view.put("annotations", annotations);
 //        }
 //        annotations.add(annotation);
@@ -182,9 +182,9 @@ public class LIFJson {
 //
 //
 //    public Json.Obj newView() {
-//        Json.Obj view = JsonProxy.newObject();
-//        Json.Arr annotations = JsonProxy.newArray();
-//        view.put("metadata", JsonProxy.newObject());
+//        Json.Obj view = proxy.newObject();
+//        Json.Arr annotations = proxy.newArray();
+//        view.put("metadata", proxy.newObject());
 //        view.put("annotations", annotations);
 //        views.add(view);
 //        return view;
@@ -258,7 +258,7 @@ public class LIFJson {
 //
     public void setError(String msg, String stacktrace) {
         this.setDiscriminator(Discriminators.Uri.ERROR);
-        Json.Obj val = JsonProxy.newObject();
+        Json.Obj val = proxy.newObject();
         val.put("@value", msg);
         val.put("stacktrace", stacktrace);
         error.put("text",  val);
@@ -275,7 +275,7 @@ public class LIFJson {
 //    }
 //
 //    public Json.Obj newFeatures(Json.Obj annotation) {
-//        Json.Obj features = JsonProxy.newObject();
+//        Json.Obj features = proxy.newObject();
 //        annotation.put("features", features);
 //        return features;
 //    }
