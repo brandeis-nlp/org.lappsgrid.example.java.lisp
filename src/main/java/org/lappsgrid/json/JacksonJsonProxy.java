@@ -26,6 +26,16 @@ public class JacksonJsonProxy extends Json.JsonProxy {
         return json;
     }
 
+    @Override
+    public Json.Arr newArray() {
+        return new JacksonJsonArr();
+    }
+
+    @Override
+    public Json.Obj newObject() {
+        return new JacksonJsonObj();
+    }
+
     public static Object valueOf(Object obj) {
         if (obj instanceof  JacksonJsonObj) {
             return ((JacksonJsonObj) obj).original();

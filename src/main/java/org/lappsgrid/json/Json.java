@@ -111,16 +111,6 @@ public interface Json {
         }
 
 
-        public Json.Arr newArray() {
-            return null;
-        }
-
-
-        public Json.Obj newObject() {
-            return null;
-        }
-
-
         public Json.Arr convertArray(String[] arr) {
             return newArray().convert(arr);
         }

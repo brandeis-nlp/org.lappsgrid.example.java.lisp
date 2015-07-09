@@ -9,6 +9,8 @@ import org.slf4j.LoggerFactory;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by shi on 7/9/15.
@@ -16,6 +18,7 @@ import java.io.StringWriter;
 public class LIFJson {
 
     static final Logger logger = LoggerFactory.getLogger(LIFJson.class);
+    static final Json.Proxy proxy = new JacksonJsonProxy();
 
     String context =  "http://vocab.lappsgrid.org/context-1.0.0.jsonld";
     String discriminator = null;
@@ -35,14 +38,14 @@ public class LIFJson {
         this.text.put("@value", text);
     }
 
-    protected static Json.Proxy proxy = new JacksonJsonProxy();
-
     public LIFJson() {
         json = proxy.newObject();
         discriminator = Discriminators.Uri.JSON_LD;
-        payload= proxy.newObject();
+        payload = proxy.newObject();
         metadata = proxy.newObject();
         error = proxy.newObject();
+        text = proxy.newObject();
+        views = proxy.newArray();
     }
 
     public LIFJson(String textjson) {
@@ -80,169 +83,160 @@ public class LIFJson {
     }
 
 
-    //
-//    public Json.Obj newViewsMetadata(Json.Obj view){
-//        Json.Obj metadata = view.getJson.Obj("metadata");
-//        if (metadata == null) {
-//            metadata = proxy.newObject();
-//            view.put("metadata", metadata);
-//        }
-//        return metadata;
-//    }
-//
-//
-//    public Json.Obj newViewswMetadata(Json.Obj view, String key, Object val){
-//        Json.Obj meta = this.newViewsMetadata(view);
-//        meta.put(key, val);
-//        return meta;
-//    }
-//
-//    public Json.Obj newContains(Json.Obj view,String containName, String type, String producer){
-//        Json.Obj meta = this.newViewsMetadata(view);
-//        Json.Obj contains = meta.getJson.Obj("contains");
-//        if (contains == null) {
-//            contains = proxy.newObject();
-//            meta.put("contains", contains);
-//        }
-//        Json.Obj contain = proxy.newObject();
-//        contain.put("producer", producer);
-//        contain.put("type",type);
-//        contains.put(containName,contain);
-//        return contains;
-//    }
-//
-//    public Json.Obj newAnnotation(Json.Obj view){
-//        Json.Obj annotation = proxy.newObject();
-//        Json.Arr annotations = view.getJson.Arr("annotations");
-//        if (annotations == null) {
-//            annotations = proxy.newArray();
-//            view.put("annotations", annotations);
-//        }
-//        annotations.add(annotation);
-//        return annotation;
-//    }
-//
-//    public Json.Obj newAnnotation(Json.Obj view, Json.Obj copyfrom) {
-//        Json.Obj annotation = new Json.Obj(copyfrom.toString());
-//        Json.Arr annotations = view.getJson.Arr("annotations");
-//        if (annotations == null) {
-//            annotations = proxy.newArray();
-//            view.put("annotations", annotations);
-//        }
-//        annotations.add(annotation);
-//        return annotation;
-//    }
-//
-//    public Json.Obj newAnnotation(Json.Obj view, String label, String id) {
-//        Json.Obj ann = this.newAnnotation(view);
-//        ann.put("label", label);
-//        ann.put("id", id);
-//        return ann;
-//    }
-//
-//    public Json.Obj newAnnotation(Json.Obj view, String label) {
-//        Json.Obj ann = this.newAnnotation(view);
-//        ann.put("label", label);
-//        ann.put("id", idHeader+id++);
-//        return ann;
-//    }
-//
-//    public Json.Obj newAnnotation(Json.Obj view, String label, String id, int start, int end) {
-//        Json.Obj ann = this.newAnnotation(view);
-//        ann.put("label", label);
-//        ann.put("id", id);
-//        ann.put("start", start);
-//        ann.put("end", end);
-//        return ann;
-//    }
-//
-//
-//
-//    public Json.Obj newAnnotation(Json.Obj view, String label,  int start, int end) {
-//        Json.Obj ann = this.newAnnotation(view);
-//        ann.put("label", label);
-//        ann.put("id", idHeader+id++);
-//        ann.put("start", start);
-//        ann.put("end", end);
-//        return ann;
-//    }
-//
-//
-//    public Json.Obj newView() {
-//        Json.Obj view = proxy.newObject();
-//        Json.Arr annotations = proxy.newArray();
-//        view.put("metadata", proxy.newObject());
-//        view.put("annotations", annotations);
-//        views.add(view);
-//        return view;
-//    }
-//
-//    public void setStart(Json.Obj annotation, int start) {
-//        annotation.put("start", start);
-//    }
-//
-//    public void setEnd(Json.Obj annotation, int end) {
-//        annotation.put("end", end);
-//    }
-//
-//    public void setWord(Json.Obj annotation, String word) {
-//        setFeature(annotation, "word", word);
-//    }
-//
-//    public void setCategory(Json.Obj annotation, String word) {
-//        setFeature(annotation, "category", word);
-//    }
-//
-//    public List<Json.Obj> getLastViewAnnotations() {
-//        ArrayList<Json.Obj> lastAnnotations = null;
-//        if(views.length() > 0) {
-//            for(int i = views.length() - 1; i >= 0; i--) {
-//                Json.Obj lastView =  (Json.Obj)views.get(i);
-//                Json.Obj lastViewMeta = (Json.Obj) lastView.get("metadata");
-//                Json.Arr lastViewAnnotations = (Json.Arr)lastView.get("annotations");
-//                Json.Obj lastViewContains = (Json.Obj)lastViewMeta.get("contains");
-//                if (lastViewContains.has(Discriminators.Uri.TOKEN)) {
-//                    // contains sentence
-//                    lastAnnotations = new ArrayList<Json.Obj>(lastViewAnnotations.length());
-//                    for(int j = 0; j < lastViewAnnotations.length(); j++) {
-//                        Json.Obj lastStepAnnotation = lastViewAnnotations.get(j);
-//                        lastAnnotations.add(lastStepAnnotation);
-//                    }
-//                    break;
-//                }
-//            }
-//        }
-//        return lastAnnotations;
-//    }
-//
-//
-//    public String getAnnotationText(Json.Obj annotation) {
-//        int start = getStart(annotation);
-//        int end = getEnd(annotation);
-//        return getText().substring(start, end);
-//    }
-//
-//    public void setSentence(Json.Obj annotation, String sent) {
-//        setFeature(annotation, "sentence", sent);
-//    }
-//
-//
-//
-//    public void setLabel(Json.Obj annotation, String label) {
-//        annotation.put("label", label);
-//    }
-//
-//    public void setId(Json.Obj annotation, String id) {
-//        annotation.put("id", id);
-//    }
-//
-//    public void setPOSTag(Json.Obj annotation, String posTag) {
-//        setFeature(annotation, "pos", posTag);
-//    }
-//    public void setNamedEntity(Json.Obj annotation, String ne) {
-//        setFeature(annotation, "ne", ne);
-//    }
-//
+
+    public Json.Obj newViewsMetadata(Json.Obj view){
+        Json.Obj metadata = view.getJsonObj("metadata");
+        if (metadata == null) {
+            metadata = proxy.newObject();
+            view.put("metadata", metadata);
+        }
+        return metadata;
+    }
+
+
+    public Json.Obj newViewswMetadata(Json.Obj view, String key, Object val){
+        Json.Obj meta = this.newViewsMetadata(view);
+        meta.put(key, val);
+        return meta;
+    }
+
+    public Json.Obj newContains(Json.Obj view,String containName, String type, String producer){
+        Json.Obj meta = this.newViewsMetadata(view);
+        Json.Obj contains = meta.getJsonObj("contains");
+        if (contains == null) {
+            contains = proxy.newObject();
+            meta.put("contains", contains);
+        }
+        Json.Obj contain = proxy.newObject();
+        contain.put("producer", producer);
+        contain.put("type",type);
+        contains.put(containName,contain);
+        return contains;
+    }
+
+    public Json.Obj newAnnotation(Json.Obj view){
+        Json.Obj annotation = proxy.newObject();
+        Json.Arr annotations = view.getJsonArr("annotations");
+        if (annotations == null) {
+            annotations = proxy.newArray();
+            view.put("annotations", annotations);
+        }
+        annotations.add(annotation);
+        return annotation;
+    }
+
+    public Json.Obj newAnnotation(Json.Obj view, Json.Obj copyfrom) {
+        Json.Obj annotation = proxy.newObject().read(copyfrom.toString());
+        Json.Arr annotations = view.getJsonArr("annotations");
+        if (annotations == null) {
+            annotations = proxy.newArray();
+            view.put("annotations", annotations);
+        }
+        annotations.add(annotation);
+        return annotation;
+    }
+
+    public Json.Obj newAnnotation(Json.Obj view, String label, String id) {
+        Json.Obj ann = this.newAnnotation(view);
+        ann.put("label", label);
+        ann.put("id", id);
+        return ann;
+    }
+
+    public Json.Obj newAnnotation(Json.Obj view, String label, String id, int start, int end) {
+        Json.Obj ann = this.newAnnotation(view);
+        ann.put("label", label);
+        ann.put("id", id);
+        ann.put("start", start);
+        ann.put("end", end);
+        return ann;
+    }
+
+
+    public Json.Obj newView() {
+        Json.Obj view = proxy.newObject();
+        Json.Arr annotations = proxy.newArray();
+        view.put("metadata", proxy.newObject());
+        view.put("annotations", annotations);
+        views.add(view);
+        return view;
+    }
+
+    public void setStart(Json.Obj annotation, int start) {
+        annotation.put("start", start);
+    }
+
+    public void setEnd(Json.Obj annotation, int end) {
+        annotation.put("end", end);
+    }
+
+    public void setWord(Json.Obj annotation, String word) {
+        setFeature(annotation, "word", word);
+    }
+
+    public void setCategory(Json.Obj annotation, String word) {
+        setFeature(annotation, "category", word);
+    }
+
+    public List<Json.Obj> getLastViewAnnotations() {
+        ArrayList<Json.Obj> lastAnnotations = null;
+        if(views.length() > 0) {
+            for(int i = views.length() - 1; i >= 0; i--) {
+                Json.Obj lastView =  (Json.Obj)views.get(i);
+                Json.Obj lastViewMeta = (Json.Obj) lastView.get("metadata");
+                Json.Arr lastViewAnnotations = (Json.Arr)lastView.get("annotations");
+                Json.Obj lastViewContains = (Json.Obj)lastViewMeta.get("contains");
+                if (lastViewContains.has(Discriminators.Uri.TOKEN)) {
+                    // contains sentence
+                    lastAnnotations = new ArrayList<Json.Obj>(lastViewAnnotations.length());
+                    for(int j = 0; j < lastViewAnnotations.length(); j++) {
+                        Json.Obj lastStepAnnotation = lastViewAnnotations.getJsonObj(j);
+                        lastAnnotations.add(lastStepAnnotation);
+                    }
+                    break;
+                }
+            }
+        }
+        return lastAnnotations;
+    }
+
+
+    public int getStart(Json.Obj annotation) {
+        return annotation.getInt("start");
+    }
+
+    public int getEnd(Json.Obj annotation) {
+        return annotation.getInt("end");
+    }
+
+    public String getAnnotationText(Json.Obj annotation) {
+        int start = getStart(annotation);
+        int end = getEnd(annotation);
+        return getText().substring(start, end);
+    }
+
+
+    public void setSentence(Json.Obj annotation, String sent) {
+        setFeature(annotation, "sentence", sent);
+    }
+
+
+    public void setLabel(Json.Obj annotation, String label) {
+        annotation.put("label", label);
+    }
+
+    public void setId(Json.Obj annotation, String id) {
+        annotation.put("id", id);
+    }
+
+    public void setPOSTag(Json.Obj annotation, String posTag) {
+        setFeature(annotation, "pos", posTag);
+    }
+
+    public void setNamedEntity(Json.Obj annotation, String ne) {
+        setFeature(annotation, "ne", ne);
+    }
+
     public void setError(String msg, String stacktrace) {
         this.setDiscriminator(Discriminators.Uri.ERROR);
         Json.Obj val = proxy.newObject();
@@ -250,29 +244,30 @@ public class LIFJson {
         val.put("stacktrace", stacktrace);
         error.put("text",  val);
     }
-    //
-//
-//
-//    public void setFeature(Json.Obj annotation, String name,  Object value) {
-//        Json.Obj features = annotation.getJson.Obj("features");
-//        if (features == null) {
-//            features = newFeatures(annotation);
-//        }
-//        features.put(name, value);
-//    }
-//
-//    public Json.Obj newFeatures(Json.Obj annotation) {
-//        Json.Obj features = proxy.newObject();
-//        annotation.put("features", features);
-//        return features;
-//    }
-//
+
+
+    public void setFeature(Json.Obj annotation, String name,  Object value) {
+        Json.Obj features = annotation.getJsonObj("features");
+        if (features == null) {
+            features = newFeatures(annotation);
+        }
+        features.put(name, value);
+    }
+
+    public Json.Obj newFeatures(Json.Obj annotation) {
+        Json.Obj features = proxy.newObject();
+        annotation.put("features", features);
+        return features;
+    }
+
     public String toString(){
         json.put("discriminator" ,discriminator);
         if (discriminator.equals(Discriminators.Uri.JSON_LD)) {
+            json.put("payload" ,payload);
             payload.put("@context",context);
             payload.put("metadata", metadata);
-            json.put("payload" ,payload);
+            payload.put("text", text);
+            payload.put("views", views);
         } else if(discriminator.equals(Discriminators.Uri.ERROR)) {
             json.put("payload" ,error);
         }
