@@ -10,7 +10,6 @@ public class TestLispCaller{
 
     public File getResourceFile(String name) {
         try {
-//            System.out.println(this.getClass().getResource("/" + name).toURI());
             return new File(this.getClass().getResource("/"+name).toURI());
         } catch (URISyntaxException e) {
             e.printStackTrace();

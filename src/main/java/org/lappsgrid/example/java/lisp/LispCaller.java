@@ -207,9 +207,9 @@ public class LispCaller {
         result.put(Result_Name_Params, params);
 
         org.armedbear.lisp.Package lisppkg = Packages.findPackage(pckg.toUpperCase());
-        for (Symbol sym:lisppkg.getAccessibleSymbols()){
-            System.out.println(sym.getName());
-        }
+//        for (Symbol sym:lisppkg.getAccessibleSymbols()){
+//            System.out.println(sym.getName());
+//        }
 
         org.armedbear.lisp.Symbol symbl = lisppkg.findAccessibleSymbol(method.toUpperCase());
         Function func = (Function) symbl.getSymbolFunction();
