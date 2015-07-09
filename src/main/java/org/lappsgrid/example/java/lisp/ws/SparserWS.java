@@ -69,7 +69,7 @@ public class SparserWS implements WebService, ISparser {
     @Override
     public String parse(String s) throws Exception{
         /** groovy **/
-//        Map res = LispCaller.call(LispCaller.LispType.Groovy, null, null, null, s);
+        Map res = LispCaller.call(LispCaller.LispType.Groovy, null, null, null, s);
 
         /** bash **/
 //        Map res = LispCaller.call(LispCaller.LispType.Bash, null, null, null, s);
@@ -79,7 +79,8 @@ public class SparserWS implements WebService, ISparser {
 //        return res.get(LispCaller.Result_Name_Output).toString();
 
         /** abcl **/
-        Map res = LispCaller.call(LispCaller.LispType.ABCL, LIFJson.getResourceFile("echo.lisp"), null, "echo", s);
+//        Map res = LispCaller.call(LispCaller.LispType.ABCL, LIFJson.getResourceFile("echo.lisp"), null, "echo", s);
+        
         return res.get(LispCaller.Result_Name_Output).toString();
 
     }
