@@ -6,7 +6,7 @@ import org.lappsgrid.api.WebService;
 /**
  * Created by shi on 7/9/15.
  */
-public class SparserWS implements WebService {
+public class SparserWS implements WebService, ISparser {
 
     @Override
     public String execute(String s) {
@@ -18,4 +18,8 @@ public class SparserWS implements WebService {
         return null;
     }
 
+    @Override
+    public String parse(String s) {
+        return null;
+    }
 }

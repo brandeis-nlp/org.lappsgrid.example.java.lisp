@@ -1,3 +1,6 @@
 #!/usr/bin/env groovy
 
-println args[0]
+println "groovy>>" + args[0]
+
+
+args[0]
