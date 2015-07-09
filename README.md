@@ -13,6 +13,12 @@ Lapps Service Framework for Wrapping Lisp software.
     * Test WSDL in soupui: http://localhost:4040/sparser/services/SparserWS?wsdl
 4. Test it Online:
     * Open http://localhost:4040/sparser/jsServices
+5. Deploy:
+    * Run maven package: mvn clean package
+    * copy the target/sparser-${version}.war into $TOMCAT_HOME/webapps
+6. Remote Access:
+    * Similar as  http://server-ip:8080/sparser/services/SparserWS?wsdl 
+    * Or http://server-ip:8080/sparser/jsServices     
     
 ### How to Call LISP Software?
 
