@@ -96,10 +96,11 @@ public class LispCaller {
 
 
 
-    public static Map call (LispType type, File lispFile, String namespace, String method, Object... params) throws LispCallerException{
-        if(!lispFile.exists()) {
-            throw new LispCallerException("Lisp file does NOT exist: " + lispFile);
-        }
+    public static Map call (LispType type, File lispFile, String namespace, String method, Object... params)
+            throws LispCallerException{
+//        if(lispFile == null || !lispFile.exists()) {
+//            throw new LispCallerException("Lisp file does NOT exist: " + lispFile);
+//        }
         if(type == LispType.ABCL){
             return callABCL(lispFile, namespace, method, params);
         }else if(type == LispType.Clojure){

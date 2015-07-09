@@ -7,8 +7,10 @@ import org.lappsgrid.json.Json;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -65,7 +67,7 @@ public class LIFJson {
             metadata = payload.getJsonObj("metadata");
             if (metadata == null)
                 metadata = proxy.newObject();
-            views =  payload.getJsonArr("views");
+            views = payload.getJsonArr("views");
             if (views == null)
                 views = proxy.newArray();
         }
@@ -318,5 +320,26 @@ public class LIFJson {
         }
         return false;
     }
+
+
+    public static File getResourceFile(String name) {
+        try {
+            return new File(LIFJson.class.getResource("/" + name).toURI());
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+
+    public static String getResourcePath(String name) {
+        try {
+            return new File(LIFJson.class.getResource("/" + name).toURI()).getAbsolutePath();
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
 
 }

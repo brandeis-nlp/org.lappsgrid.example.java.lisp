@@ -3,5 +3,5 @@
 (DEFUN hello (x)
                   x)
 
-(DEFUN hello (x)
-                  (format t "Hello ~A .~%" x))
+;;; (DEFUN hello (x)
+;;;                  (format t "Hello ~A .~%" x))

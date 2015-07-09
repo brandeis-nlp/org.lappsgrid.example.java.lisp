@@ -5,6 +5,6 @@ package org.lappsgrid.example.java.lisp.ws;
  */
 public interface ISparser {
 
-    String parse (String s);
+    String parse (String s) throws Exception;
 
 }

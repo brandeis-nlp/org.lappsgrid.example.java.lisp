@@ -1,16 +1,19 @@
 {
-  "name": "org.lappsgrid.example.java.lisp.ws.SparserWS",
-  "version": "0.0.1",
-  "description": "Sparser Web Services",
-  "vendor": "http://www.cs.brandeis.edu/",
-  "allow": "http://vocab.lappsgrid.org/ns/allow#any",
-  "license": "http://vocab.lappsgrid.org/ns/license#apache-2.0",
-  "requires": {
-    "metadata": {
-    },
-    "payload": {
-
-    }
-  },
-  "produces": { "language": [ "en" ] }
+"$schema" : "http://vocab.lappsgrid.org/schema/service-schema-1.0.0.json",
+"name" : "org.lappsgrid.example.java.lisp.ws.SparserWS",
+"version": "0.0.1",
+"description": "Sparser Web Services",
+"vendor" : "http://www.sift.net/, http://www.cs.brandeis.edu/",
+"allow" : "http://vocab.lappsgrid.org/ns/allow#any",
+"license" : "http://vocab.lappsgrid.org/ns/license#apache-2.0",
+"requires" : {
+"language" : [ "en" ],
+"format" : [ "http://vocab.lappsgrid.org/ns/media/jsonld#lif" ],
+"annotations" : [ "http://vocab.lappsgrid.org/PhraseStructure" ]
+},
+"produces" : {
+"language" : [ "en" ],
+"format" : [ "http://vocab.lappsgrid.org/ns/media/jsonld#lif" ],
+"annotations" : [ "http://vocab.lappsgrid.org/PhraseStructure" ]
+}
 }
