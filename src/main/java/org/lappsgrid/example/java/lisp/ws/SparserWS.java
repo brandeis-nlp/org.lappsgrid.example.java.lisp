@@ -39,7 +39,7 @@ public class SparserWS implements WebService, ISparser {
 
 
     public String execute(LIFJson lif) throws Exception {
-        
+
         return lif.toString();
     }
 

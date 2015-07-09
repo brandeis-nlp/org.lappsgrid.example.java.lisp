@@ -23,35 +23,18 @@ public class LIFJson {
     String context =  "http://vocab.lappsgrid.org/context-1.0.0.jsonld";
     Json.Obj metadata = null;
     Json.Obj json = null;
-    Json.Arr targets = null;
+    Json.Obj text = null;
 
-    String [] sources = null;
-    String template = null;
+    Json.Arr views = null;
 
-    public String[] getSources() {
-        return sources;
+
+    public String getText() {
+        return text.get("@value").toString();
     }
 
-
-    //    Json.Arr views = null;
-
-    //
-//    String idHeader = "";
-//    int id = 0;
-//
-//    public void setIdHeader(String idh) {
-//        idHeader = idh;
-//        id = 0; // reset.
-//    }
-//
-//    public String getText() {
-//        return text.getString("@value");
-//    }
-//
-//    public void setText (String text) {
-//        this.text.put("@value", text);
-//    }
-//
+    public void setText (String text) {
+        this.text.put("@value", text);
+    }
 
     protected static Json.Proxy proxy = new JacksonJsonProxy();
 
@@ -61,21 +44,8 @@ public class LIFJson {
         payload= proxy.newObject();
         metadata = proxy.newObject();
         error = proxy.newObject();
-        targets = proxy.newArray();
-    }
-    //
-    public void setDiscriminator(String s) {
-        this.discriminator = s;
-    }
-    //
-    public String getTemplate() {
-        return template;
     }
 
-    public String getDiscriminator() {
-        return discriminator;
-    }
-    //
     public LIFJson(String textjson) {
         json = proxy.newObject().read(textjson);
         discriminator = json.get("discriminator").toString().trim();
@@ -85,22 +55,21 @@ public class LIFJson {
             if (metadata == null) {
                 metadata = proxy.newObject();
             }
-            Json.Arr sourceArr =  (Json.Arr)payload.get("sources");
-            sources = new String[sourceArr.length()];
-            for(int i = 0; i < sourceArr.length(); i++) {
-                sources[i] = sourceArr.get(i).toString();
-            }
-            targets = proxy.newArray();
         }
     }
 
-    public void addTarget(String target) {
-        targets.add(target);
+
+    public void setDiscriminator(String s) {
+        this.discriminator = s;
     }
-    //
+    public String getDiscriminator() {
+        return discriminator;
+    }
     public Json.Obj getJsonObj() {
         return json;
     }
+
+
     //
 //    public Json.Obj newViewsMetadata(Json.Obj view){
 //        Json.Obj metadata = view.getJson.Obj("metadata");
@@ -291,7 +260,6 @@ public class LIFJson {
     public String toString(){
         json.put("discriminator" ,discriminator);
         if (discriminator.equals(Discriminators.Uri.JSON_LD)) {
-            payload.put("targets", targets);
             payload.put("@context",context);
             payload.put("metadata", metadata);
             json.put("payload" ,payload);
@@ -302,6 +270,11 @@ public class LIFJson {
     }
 
 
+    /**
+     * searialize throwable object into LIF json.
+     * @param th
+     * @return
+     */
     public static String toString(Throwable th) {
         Json.Obj json = proxy.newObject();
         json.put("discriminator", Discriminators.Uri.ERROR);
@@ -314,12 +287,19 @@ public class LIFJson {
         return json.toString();
     }
 
+    /**
+     * find meta json file from src/main/resources/metadata directory
+     * @param cls
+     * @return
+     * @throws Exception
+     */
     public static String meta(Class cls) throws Exception {
-        String meta = IOUtils.toString(cls.getResourceAsStream(cls.getName()));
+        String meta = IOUtils.toString(cls.getResourceAsStream("/metadata/"+ cls.getName() +".json"));
         Json.Obj json = proxy.newObject();
         json.put("discriminator", Discriminators.Uri.META);
         json.put("payload", proxy.newObject().read(meta));
-        logger.info("---------------------META:-------------------\n" + json.toString());
+        logger.info("---------------------META:-------------------");
+        logger.info(json.toString());
         return json.toString();
     }
 
@@ -333,16 +313,5 @@ public class LIFJson {
         }
         return false;
     }
-
-//
-//    @Override
-//    public boolean equals(Object o) {
-//        if (o == null)
-//            return false;
-//        JsonSerialization obj = (JsonSerialization)o;
-//        this.toString();
-//        obj.toString();
-//        return this.json.equals(obj.json);
-//    }
 
 }
