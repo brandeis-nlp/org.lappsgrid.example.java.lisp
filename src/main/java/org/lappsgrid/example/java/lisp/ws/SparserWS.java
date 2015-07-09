@@ -48,10 +48,10 @@ public class SparserWS implements WebService, ISparser {
         lif.setStart(ann, 0);
         lif.setEnd(ann, ret.length());
         lif.setSentence(ann, ret);
-//        lif.setFeature(ann, "caller", "groovy");
+        lif.setFeature(ann, "caller", "groovy");
 //        lif.setFeature(ann, "caller", "bash");
 //        lif.setFeature(ann, "caller", "clojure");
-        lif.setFeature(ann, "caller", "abcl");
+//        lif.setFeature(ann, "caller", "abcl");
         return lif.toString();
     }
 
