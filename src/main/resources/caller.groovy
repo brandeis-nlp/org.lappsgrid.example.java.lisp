@@ -13,4 +13,4 @@ def sh = new File(dir, "caller.sh").getAbsolutePath();
 */
 
 
-args[0]
+"groovy>>"+args[0]
