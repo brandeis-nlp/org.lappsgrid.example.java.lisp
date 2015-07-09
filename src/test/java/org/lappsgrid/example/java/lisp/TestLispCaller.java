@@ -38,8 +38,8 @@ public class TestLispCaller{
 
     @Test
     public void testCallBash () throws LispCallerException {
-        Object ret = LispCaller.callBash(null, "hello");
-        System.out.println(ret);
+//        Object ret = LispCaller.callBash(null, "hello");
+//        System.out.println(ret);
     }
 
     @Test
