@@ -9,69 +9,88 @@
       Lapps Web Services wrapping example for lisp hello-world
   </description>
 
-    <!--<properties>-->
-        <!--<lapps.version>1.0.1</lapps.version>-->
-        <!--<lapps.core.version>1.2.0</lapps.core.version>-->
-        <!--<lapps.discriminator>1.2.3</lapps.discriminator>-->
-        <!--<lapps.util>1.0.0</lapps.util>-->
-        <!--<vocabulary.version>0.9.4</vocabulary.version>-->
-        <!--<serialization.version>0.13.0-SNAPSHOT</serialization.version>-->
-        <!--<anc.common>3.4.0</anc.common>-->
-    <!--</properties>-->
+    <properties>
+        <lapps.version>2.0.0</lapps.version>
+        <lapps.core.version>2.0.0</lapps.core.version>
+        <lapps.discriminator>2.0.1</lapps.discriminator>
+        <vocabulary.version>1.0.0</vocabulary.version>
+        <serialization.version>2.0.0</serialization.version>
+    </properties>
+
 
   <dependencies>
-      <!-- LappsGrid dependencies -->
-      <!--<dependency>-->
-          <!--<groupId>org.lappsgrid</groupId>-->
-          <!--<artifactId>api</artifactId>-->
-          <!--<version>${lapps.version}</version>-->
-      <!--</dependency>-->
+      <!-- V LappsGrid API dependencies -->
+      <dependency>
+          <groupId>org.lappsgrid</groupId>
+          <artifactId>api</artifactId>
+          <version>${lapps.version}</version>
+      </dependency>
 
-      <!--<dependency>-->
-          <!--<groupId>org.lappsgrid</groupId>-->
-          <!--<artifactId>core</artifactId>-->
-          <!--<version>${lapps.core.version}</version>-->
-      <!--</dependency>-->
-      <!--<dependency>-->
-          <!--<groupId>org.lappsgrid</groupId>-->
-          <!--<artifactId>discriminator</artifactId>-->
-          <!--<version>${lapps.discriminator}</version>-->
-      <!--</dependency>-->
-      <!--<dependency>-->
-          <!--<groupId>org.anc.lapps</groupId>-->
-          <!--<artifactId>util</artifactId>-->
-          <!--<version>${lapps.util}</version>-->
-      <!--</dependency>-->
-      <!--<dependency>-->
-          <!--<groupId>org.anc.lapps</groupId>-->
-          <!--<artifactId>serialization</artifactId>-->
-          <!--<version>${serialization.version}</version>-->
-      <!--</dependency>-->
-      <!--<dependency>-->
-          <!--<groupId>org.lappsgrid</groupId>-->
-          <!--<artifactId>vocabulary</artifactId>-->
-          <!--<version>${vocabulary.version}</version>-->
-      <!--</dependency>-->
+      <dependency>
+          <groupId>org.lappsgrid</groupId>
+          <artifactId>core</artifactId>
+          <version>${lapps.core.version}</version>
+      </dependency>
+      <dependency>
+          <groupId>org.lappsgrid</groupId>
+          <artifactId>discriminator</artifactId>
+          <version>${lapps.discriminator}</version>
+      </dependency>
+      <dependency>
+          <groupId>org.lappsgrid</groupId>
+          <artifactId>serialization</artifactId>
+          <version>${serialization.version}</version>
+      </dependency>
+      <dependency>
+          <groupId>org.lappsgrid</groupId>
+          <artifactId>vocabulary</artifactId>
+          <version>${vocabulary.version}</version>
+      </dependency>
+
+      <!-- U LappsGrid API dependencies -->
+
+      <!-- V Groovy dependencies -->
+      <dependency>
+          <groupId>org.codehaus.groovy</groupId>
+          <artifactId>groovy-all</artifactId>
+          <version>2.4.3</version>
+      </dependency>
+
+      <!-- U Groovy dependencies -->
 
 
+      <!--&lt;!&ndash; V CRaSH API dependencies &ndash;&gt;-->
       <!--<dependency>-->
-          <!--<groupId>org.lappsgrid</groupId>-->
-          <!--<artifactId>service-grid-libs</artifactId>-->
-          <!--<version>1.1.0</version>-->
+          <!--<groupId>org.crsh</groupId>-->
+          <!--<artifactId>crsh.shell.core</artifactId>-->
+          <!--<version>1.2.11</version>-->
       <!--</dependency>-->
+      <!--&lt;!&ndash; U CRaSH API dependencies &ndash;&gt;-->
 
+      <!-- V ServiceGrid API dependencies -->
+      <dependency>
+          <groupId>org.lappsgrid</groupId>
+          <artifactId>service-grid-libs</artifactId>
+          <version>1.1.0</version>
+      </dependency>
+      <!-- U ServiceGrid API dependencies -->
 
+      <!-- V CLOJURE API dependencies -->
       <dependency>
           <groupId>org.clojure</groupId>
           <artifactId>clojure</artifactId>
           <version>1.7.0</version>
       </dependency>
 
+      <!-- U CLOJURE API dependencies -->
+
+      <!-- V ABCL API dependencies -->
       <dependency>
           <groupId>org.armedbear.lisp</groupId>
           <artifactId>abcl</artifactId>
           <version>1.0.1</version>
       </dependency>
+      <!-- U ABCL API dependencies -->
 
       <dependency>
           <groupId>commons-io</groupId>
@@ -80,19 +99,25 @@
       </dependency>
 
 
+      <!-- V SLF4J API dependencies -->
       <dependency>
           <groupId>org.slf4j</groupId>
           <artifactId>slf4j-simple</artifactId>
           <version>1.6.4</version>
       </dependency>
 
-      <!-- JSON dependencies -->
+      <!-- U SLF4J API dependencies -->
+
+      <!-- V JUNIT dependencies -->
       <dependency>
           <groupId>junit</groupId>
           <artifactId>junit</artifactId>
          <version>4.8.1</version>
          <scope>test</scope>
       </dependency>
+
+      <!-- U JUNIT dependencies -->
+
   </dependencies>
 
 	<build>

@@ -3,19 +3,17 @@ package org.lappsgrid.example.java.lisp;
 import clojure.lang.RT;
 import clojure.lang.Var;
 import clojure.lang.Compiler;
+import groovy.lang.*;
 import org.apache.commons.io.FileUtils;
 import org.armedbear.lisp.*;
-import org.armedbear.lisp.Package;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import sun.net.www.protocol.file.FileURLConnection;
+
 
 import java.io.*;
 import java.net.URISyntaxException;
 import java.nio.charset.Charset;
 import java.util.*;
-
-import static org.armedbear.lisp.Lisp.NIL;
 
 public class LispCaller {
 
@@ -24,21 +22,34 @@ public class LispCaller {
     public enum LispType {
         ABCL,
         Clojure,
-        CMD
+        Bash,
+        Groovy
     }
 
-    private static Map callIO(String tool, File lispFile, String ... params) throws LispCallerException{
+    public static final String Result_Name_Tool = "input.tool";
+    public static final String Result_Name_Lisp = "input.lisp";
+    public static final String Result_Name_Params = "input.params";
+    public static final String Result_Name_NS = "input.namespace";
+    public static final String Result_Name_Method = "input.method";
+    public static final String Result_Name_Output = "result.output";
+    public static final String Result_Name_Error = "result.error";
+    public static final String Result_Name_ReturnCode = "result.retcode";
+    public static final String Result_Name_Watch = "result.watch";
+
+
+    private static Map callIO(String tool, File lispFile, Object ... params) throws LispCallerException{
         Map result = new LinkedHashMap();
         List<String> callAndArgs = new ArrayList<String>(params.length + 2);
         callAndArgs.add(tool);
-        callAndArgs.add(lispFile.getAbsolutePath());
-        logger.info("call(): lisp=" + lispFile);
-        for (String param: params) {
-            callAndArgs.add(param);
+        if(lispFile != null)
+            callAndArgs.add(lispFile.getAbsolutePath());
+        logger.info("callIO(): lisp=" + lispFile);
+        for (Object param: params) {
+            callAndArgs.add(param.toString());
         }
-        result.put("tool", tool);
-        result.put("lisp", lispFile.getAbsolutePath());
-        result.put("params", params);
+        result.put(Result_Name_Tool, tool);
+        result.put(Result_Name_Lisp, lispFile);
+        result.put(Result_Name_Params, params);
         try{
             ProcessBuilder builder = new ProcessBuilder(callAndArgs);
             Process p = builder.start();
@@ -51,14 +62,14 @@ public class LispCaller {
             while ((st = stdInput.readLine()) != null) {
                 sb.append(st);
             }
-            result.put("output", sb.toString());
+            result.put(Result_Name_Output, sb.toString());
             sb.setLength(0);
             while ((st = stdError.readLine()) != null) {
                 sb.append(st);
             }
-            result.put("error", sb.toString());
+            result.put(Result_Name_Error, sb.toString());
             int retcode = p.waitFor();
-            result.put("retcode", retcode);
+            result.put(Result_Name_ReturnCode, retcode);
             p.destroy();
         }catch(Exception e){
             e.printStackTrace();
@@ -78,8 +89,6 @@ public class LispCaller {
             return evalABCL(lispFile);
         }else if(type == LispType.Clojure){
             return evalClojure(lispFile);
-        }else if(type == LispType.CMD) {
-            return evalCMD(lispFile);
         }
         return null;
     }
@@ -87,31 +96,73 @@ public class LispCaller {
 
 
 
-    public static Object call (LispType type, File lispFile, String ns, String method, Object... params) throws LispCallerException{
+    public static Map call (LispType type, File lispFile, String namespace, String method, Object... params) throws LispCallerException{
         if(!lispFile.exists()) {
             throw new LispCallerException("Lisp file does NOT exist: " + lispFile);
         }
         if(type == LispType.ABCL){
-            return callABCL(lispFile, ns, method, params);
+            return callABCL(lispFile, namespace, method, params);
         }else if(type == LispType.Clojure){
-            return callClojure(lispFile, ns, method, params);
-        }else if(type == LispType.CMD){
-            throw new LispCallerException("Not Supported Method!");
+            return callClojure(lispFile, namespace, method, params);
+        }else if(type == LispType.Bash){
+            return callBash(lispFile, params);
+        }else if (type == LispType.Groovy){
+            return callGroovy(lispFile, params);
         }
         return null;
     }
 
 
-    public static Map evalCMD(File lispFile) throws LispCallerException{
-        String tool = "";
+
+
+
+    public static Map callGroovy(File lispFile, Object... params) throws LispCallerException {
+        File scriptFile;
+        Map result = new LinkedHashMap();
         try {
-            tool = new File(LispCaller.class.getResource("/caller.cmd").toURI()).getAbsolutePath();
+            scriptFile = new File(LispCaller.class.getResource("/caller.groovy").toURI());
         } catch (URISyntaxException e) {
             e.printStackTrace();
-            throw new LispCallerException("Tool Script does NOT exist: (caller.cmd)");
+            throw new LispCallerException("Tool Script does NOT exist: (caller.groovy)");
         }
-        Map resMap = callIO(tool, lispFile);
-        return resMap;
+        List<String> callAndArgs = new ArrayList<String>();
+        logger.info("callGroovy(): lisp=" + lispFile);
+        if(lispFile != null) {
+            callAndArgs.add(lispFile.getAbsolutePath());
+        }
+        for (Object param : params) {
+            callAndArgs.add(param.toString());
+        }
+        result.put(Result_Name_Tool, "caller.groovy");
+        result.put(Result_Name_Lisp, lispFile);
+        result.put(Result_Name_Params, params);
+
+        Binding bnd = new Binding(callAndArgs.toArray(new String[callAndArgs.size()]));
+        GroovyShell shell = new GroovyShell(bnd);
+        try {
+
+            Object ret = shell.evaluate(scriptFile);
+            result.put(Result_Name_Output, ret);
+        } catch (IOException e) {
+            e.printStackTrace();
+            result.put(Result_Name_Error, e);
+            throw new LispCallerException("Groovy Evaluate Failure: ( "+scriptFile+" ):", e);
+        }
+        result.put(Result_Name_Watch, bnd.getVariables());
+        return result;
+    }
+
+
+    public static Map callBash(File lispFile, Object... params) throws LispCallerException{
+        File scriptFile;
+        try {
+            scriptFile = new File(LispCaller.class.getResource("/caller.sh").toURI());
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+            throw new LispCallerException("Tool Script does NOT exist: (caller.sh)");
+        }
+        Map ret = callIO(scriptFile.getAbsolutePath(), lispFile, params);
+        return ret;
     }
 
 
@@ -122,7 +173,7 @@ public class LispCaller {
         }
         String abcl = null;
         try {
-            abcl = FileUtils.readFileToString(abclFile);
+            abcl = FileUtils.readFileToString(abclFile, "UTF-8");
         } catch (IOException e) {
             e.printStackTrace();
             throw new LispCallerException("Read ABCL Script FAILURE: ("+ abclFile +" )!", e);
@@ -132,21 +183,29 @@ public class LispCaller {
     }
 
 
-    protected static LispObject callABCL(File abclFile, String pckg, String method, Object... params) throws LispCallerException{
+    protected static Map callABCL(File abclFile, String pckg, String method, Object... params) throws LispCallerException{
+        Map result = new LinkedHashMap();
         Interpreter interpreter = Interpreter.getInstance();
         if(interpreter == null) {
             interpreter = Interpreter.createInstance();
         }
         String abcl = null;
         try {
-            abcl = FileUtils.readFileToString(abclFile);
+            abcl = FileUtils.readFileToString(abclFile, "UTF-8");
         } catch (IOException e) {
             e.printStackTrace();
             throw new LispCallerException("Read ABCL Script FAILURE: ("+ abclFile +" )!", e);
         }
+
         LispObject lobj = interpreter.eval(abcl);
         if (pckg == null)
             pckg = "COMMON-LISP-USER";
+
+        result.put(Result_Name_Lisp,abclFile.getAbsoluteFile());
+        result.put(Result_Name_NS, pckg);
+        result.put(Result_Name_Method, method);
+        result.put(Result_Name_Params, params);
+
         org.armedbear.lisp.Package lisppkg = Packages.findPackage(pckg.toUpperCase());
         for (Symbol sym:lisppkg.getAccessibleSymbols()){
             System.out.println(sym.getName());
@@ -159,7 +218,9 @@ public class LispCaller {
             lispobjs[i] = JavaObject.getInstance(params[i]);
         }
         LispObject ret = func.execute(lispobjs);
-        return ret;
+
+        result.put(Result_Name_Output, ret);
+        return result;
     }
 
 
@@ -173,17 +234,27 @@ public class LispCaller {
     final static private Var LEGACY_SCRIPT = RT.var("clojure.main", "legacy-script");
     final static private Var MAIN = RT.var("clojure.main", "main");
 
-    protected static Object callClojure(File cljFile, String ns, String method, Object... params) throws LispCallerException{
+    protected static Map callClojure(File cljFile, String ns, String method, Object... params)
+            throws LispCallerException{
+        Map result = new LinkedHashMap();
         try {
             Compiler.load(new InputStreamReader(new FileInputStream(cljFile), Charset.forName("UTF-8")));
         } catch (Exception e) {
             e.printStackTrace();
             throw new LispCallerException("Load Clojure Script FAILURE: ("+ cljFile.getAbsolutePath()+" )!", e);
         }
+
         if (ns == null)
             ns = "clojure.core";
+
+        result.put(Result_Name_Lisp,cljFile.getAbsoluteFile());
+        result.put(Result_Name_NS, ns);
+        result.put(Result_Name_Method, method);
+        result.put(Result_Name_Params, params);
         Var v = RT.var(ns, method);
-        return v.applyTo(RT.seq(params));
+        Object ret = v.applyTo(RT.seq(params));
+        result.put(Result_Name_Output, ret);
+        return result;
     }
 
 
