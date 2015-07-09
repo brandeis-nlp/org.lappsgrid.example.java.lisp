@@ -81,6 +81,6 @@ public class SparserWS implements WebService, ISparser {
         /** abcl **/
         Map res = LispCaller.call(LispCaller.LispType.ABCL, LIFJson.getResourceFile("echo.lisp"), null, "echo", s);
         return res.get(LispCaller.Result_Name_Output).toString();
-        
+
     }
 }
