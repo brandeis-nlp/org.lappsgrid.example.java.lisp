@@ -26,6 +26,15 @@ public interface Json {
          Arr convert(String [] arr);
          Arr convert(Collection<String> arr);
 
+
+        String getString(int i);
+        Long getLong(int i);
+        Double getDouble(int i);
+        Boolean getBoolean(int i);
+        Integer getInt(int i);
+        Arr getJsonArr(int i);
+        Obj getJsonObj(int i);
+
         /** clone a Json Arr **/
 //         Arr clone();
 
@@ -49,6 +58,15 @@ public interface Json {
 
         /** if has original mapping **/
          Object original();
+
+
+        String getString(String key);
+        Long getLong(String key);
+        Double getDouble(String key);
+        Boolean getBoolean(String key);
+        Integer getInt(String key);
+        Arr getJsonArr(String key);
+        Obj getJsonObj(String key);
 
         /** clone a Json Object **/
 //         Obj clone();
@@ -137,6 +155,7 @@ public interface Json {
             }
             return false;
         }
+
     }
 
 }

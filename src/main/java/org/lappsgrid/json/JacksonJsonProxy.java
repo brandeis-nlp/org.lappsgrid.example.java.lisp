@@ -106,6 +106,62 @@ public class JacksonJsonProxy extends Json.JsonProxy {
             return map;
         }
 
+
+        public String getString(String key) {
+            Object val = this.get(key);
+            if (val != null) {
+                return (String)val;
+            }
+            return null;
+        }
+
+        public Long getLong(String key) {
+            Object val = this.get(key);
+            if (val != null) {
+                return (Long)val;
+            }
+            return null;
+        }
+
+        public Double getDouble(String key) {
+            Object val = this.get(key);
+            if (val != null) {
+                return (Double)val;
+            }
+            return null;
+        }
+
+        public Boolean getBoolean(String key) {
+            Object val = this.get(key);
+            if (val != null) {
+                return (Boolean)val;
+            }
+            return null;
+        }
+
+        public Integer getInt(String key) {
+            Object val = this.get(key);
+            if (val != null) {
+                return ((Integer)val);
+            }
+            return null;
+        }
+
+        public Arr getJsonArr(String key){
+            Object val = this.get(key);
+            if (val != null) {
+                return (Arr)val;
+            }
+            return null;
+        }
+        public Obj getJsonObj(String key){
+            Object val = this.get(key);
+            if (val != null) {
+                return (Obj)val;
+            }
+            return null;
+        }
+
 //
 //        public Json.Obj clone() {
 //            return new JacksonJson.Obj(new LinkedHashMap<String, Object>(map));
@@ -156,6 +212,62 @@ public class JacksonJsonProxy extends Json.JsonProxy {
             return value2object(list.get(i));
         }
 
+
+        public Json.Obj getJsonObj(int i) {
+            Object val = get(i);
+            if (val != null) {
+                return (Json.Obj)val;
+            }
+            return null;
+        }
+
+        public Json.Arr getJsonArr(int i) {
+            Object val = get(i);
+            if (val != null) {
+                return (Json.Arr)val;
+            }
+            return null;
+        }
+
+        public String getString(int i) {
+            Object val = this.get(i);
+            if (val != null) {
+                return (String)val;
+            }
+            return null;
+        }
+
+        public Long getLong(int i) {
+            Object val = this.get(i);
+            if (val != null) {
+                return (Long)val;
+            }
+            return null;
+        }
+
+        public Double getDouble(int i) {
+            Object val = this.get(i);
+            if (val != null) {
+                return (Double)val;
+            }
+            return null;
+        }
+
+        public Boolean getBoolean(int i) {
+            Object val = this.get(i);
+            if (val != null) {
+                return (Boolean)val;
+            }
+            return null;
+        }
+
+        public Integer getInt(int i) {
+            Object val = this.get(i);
+            if (val != null) {
+                return (Integer)val;
+            }
+            return null;
+        }
 
         public Json.Arr add(Object s) {
             list.add(valueOf(s));

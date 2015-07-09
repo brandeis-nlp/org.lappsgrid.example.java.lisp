@@ -17,19 +17,18 @@ public class LIFJson {
 
     static final Logger logger = LoggerFactory.getLogger(LIFJson.class);
 
+    String context =  "http://vocab.lappsgrid.org/context-1.0.0.jsonld";
     String discriminator = null;
     Json.Obj payload = null;
     Json.Obj error = null;
-    String context =  "http://vocab.lappsgrid.org/context-1.0.0.jsonld";
     Json.Obj metadata = null;
     Json.Obj json = null;
     Json.Obj text = null;
-
     Json.Arr views = null;
 
 
     public String getText() {
-        return text.get("@value").toString();
+        return text.getString("@value");
     }
 
     public void setText (String text) {
@@ -49,12 +48,23 @@ public class LIFJson {
     public LIFJson(String textjson) {
         json = proxy.newObject().read(textjson);
         discriminator = json.get("discriminator").toString().trim();
-        if(discriminator.equals(Discriminators.Uri.JSON_LD)) {
-            payload = (Json.Obj)json.get("payload");
-            metadata = (Json.Obj)payload.get("metadata");
-            if (metadata == null) {
+        if (discriminator.equals(Discriminators.Uri.TEXT)) {
+            text = proxy.newObject();
+            text.put("@value", json.get("payload"));
+            // reinitialize other parts.
+            discriminator = Discriminators.Uri.JSON_LD;
+            payload = proxy.newObject();
+            metadata =  proxy.newObject();
+            views = proxy.newArray();
+        } else if(discriminator.equals(Discriminators.Uri.JSON_LD)) {
+            payload = json.getJsonObj("payload");
+            text = payload.getJsonObj("text");
+            metadata = payload.getJsonObj("metadata");
+            if (metadata == null)
                 metadata = proxy.newObject();
-            }
+            views =  payload.getJsonArr("views");
+            if (views == null)
+                views = proxy.newArray();
         }
     }
 

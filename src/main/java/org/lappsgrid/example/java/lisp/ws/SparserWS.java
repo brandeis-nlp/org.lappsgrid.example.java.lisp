@@ -27,8 +27,7 @@ public class SparserWS implements WebService, ISparser {
                 }
             } else { // pure text input
                 lif = new LIFJson();
-                lif.setError("Only JSON imput is allowed!", "Unkown input: " + s);
-                return lif.toString();
+                lif.setText(s); // put pure text into lif.
             }
             return execute(lif);
         }catch(Throwable th) {
