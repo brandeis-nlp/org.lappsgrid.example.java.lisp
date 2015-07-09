@@ -189,7 +189,7 @@ public class LispCaller {
         if(interpreter == null) {
             interpreter = Interpreter.createInstance();
         }
-        String abcl = null;
+        String abcl;
         try {
             abcl = FileUtils.readFileToString(abclFile, "UTF-8");
         } catch (IOException e) {
@@ -198,10 +198,11 @@ public class LispCaller {
         }
 
         LispObject lobj = interpreter.eval(abcl);
+
         if (pckg == null)
             pckg = "COMMON-LISP-USER";
 
-        result.put(Result_Name_Lisp,abclFile.getAbsoluteFile());
+        result.put(Result_Name_Lisp, abclFile.getAbsoluteFile());
         result.put(Result_Name_NS, pckg);
         result.put(Result_Name_Method, method);
         result.put(Result_Name_Params, params);

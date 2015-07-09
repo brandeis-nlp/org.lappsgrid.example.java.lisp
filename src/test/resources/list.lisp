@@ -7,3 +7,5 @@
 
 (DEFUN HELLOWORLD (WHO)
                   (concat-strings (list "HI" WHO "WORLD")))
+
+(HELLOWORLD "Yours")

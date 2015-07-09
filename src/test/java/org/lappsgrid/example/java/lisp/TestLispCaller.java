@@ -19,7 +19,6 @@ public class TestLispCaller{
 
     @Test
     public void testCallClojure () throws LispCallerException {
-
         Object ret = LispCaller.callClojure(getResourceFile("helloworld.clj"), null, "hello", "world");
         System.out.println(ret);
 
@@ -29,12 +28,17 @@ public class TestLispCaller{
 
     @Test
     public void testCallABCL () throws LispCallerException {
-
-        Object ret = LispCaller.callABCL(getResourceFile("helloworld.abcl"), null, "HELLO");
+        Object ret = LispCaller.callABCL(getResourceFile("helloworld.lisp"), null, "HELLO");
         System.out.println(ret);
-        ret = LispCaller.callABCL(getResourceFile("list.abcl"), null, "HELLOWORLD", "Your");
-        System.out.println(ret);
+//        ret = LispCaller.callABCL(getResourceFile("list.lisp"), null, "HELLOWORLD", "Your");
+//        System.out.println(ret);
 
+    }
+
+
+    public void testEvalABCL () throws LispCallerException {
+        Object ret = LispCaller.evalABCL(getResourceFile("list.lisp"));
+        System.out.println(ret);
     }
 
 

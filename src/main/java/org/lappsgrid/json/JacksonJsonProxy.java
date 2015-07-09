@@ -12,6 +12,7 @@ import java.util.*;
  */
 public class JacksonJsonProxy extends Json.JsonProxy {
 
+
     @Override
     public String obj2json(Object obj) throws Exception {
         ObjectWriter ow = new ObjectMapper().writer();
